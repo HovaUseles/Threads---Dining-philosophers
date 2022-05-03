@@ -31,62 +31,37 @@ namespace Threads___Dining_philosophers
         {
             while (spaghetti > 0 && this.runTread == true)
             {
-                if (Monitor.TryEnter(this.leftFork.inUse))
+                if (this.id == 4)
                 {
-                    TryOtherFork(this.leftFork);
+                    if (Monitor.TryEnter(this.rightFork.inUse))
+                    {
+                        TryOtherFork(this.rightFork);
+                    }
+                    else if (Monitor.TryEnter(this.leftFork.inUse))
+                    {
+                        TryOtherFork(this.leftFork);
+                    }
                 }
-                if (Monitor.TryEnter(this.rightFork.inUse))
+                else
                 {
-                    TryOtherFork(this.rightFork);
+
+                    if (Monitor.TryEnter(this.leftFork.inUse))
+                    {
+                        TryOtherFork(this.leftFork);
+                    }
+                    else if (Monitor.TryEnter(this.rightFork.inUse))
+                    {
+                        TryOtherFork(this.rightFork);
+                    }
+
                 }
 
-                #region Old Code
-                //    bool leftAvailable;
-                //    bool rightAvailable;
-
-                //    if (this.id == 4)
-                //    {
-                //        leftAvailable = Monitor.TryEnter(this.leftFork.inUse);
-                //        rightAvailable = Monitor.TryEnter(this.rightFork.inUse);
-                //    }
-                //    else
-                //    {
-                //        rightAvailable = Monitor.TryEnter(this.rightFork.inUse);
-                //        leftAvailable = Monitor.TryEnter(this.leftFork.inUse);
-                //    }
-
-
-                //    if (leftAvailable && rightAvailable)
-                //    {
-                //        this.Eat();
-                //    }
-                //    else if (leftAvailable)
-                //    {
-                //        Monitor.Exit(this.leftFork.inUse);
-                //        Console.WriteLine("Philosoph {0} is waiting. Thread [{1}]", this.id, Thread.CurrentThread.ManagedThreadId);
-                //    }
-                //    else if (rightAvailable)
-                //    {
-                //        Monitor.Exit(this.rightFork.inUse);
-                //        Console.WriteLine("Philosoph {0} is waiting. Thread [{1}]", this.id, Thread.CurrentThread.ManagedThreadId);
-                //    }
-                //    else
-                //    {
-                //        Console.WriteLine("Philosoph {0} is waiting. Thread [{1}]", this.id, Thread.CurrentThread.ManagedThreadId);
-                //    }
-                //    Thread.Sleep(1000);
-                //}
-                //if (runTread == true)
-                //{
-                //    Console.WriteLine("{0} is done eating", this.name);
-                //    Monitor.Exit(this.leftFork.inUse);
-                //    Monitor.Exit(this.rightFork.inUse);
-                //}
-                #endregion
             }
             if (runTread == true)
             {
-                Console.WriteLine("Philosopher {0} is done eating", this.id);
+                Console.WriteLine("{0} is done eating", this.name);
+                Monitor.Exit(this.leftFork.inUse);
+                Monitor.Exit(this.rightFork.inUse);
             }
         }
 
@@ -116,6 +91,7 @@ namespace Threads___Dining_philosophers
                         {
                             SurrenderFork(otherFork);
                         }
+                        
                         break;
                     }
                     else
@@ -141,11 +117,8 @@ namespace Threads___Dining_philosophers
         private void Eat()
         {
             this.spaghetti -= 100;
-            Console.WriteLine("Philosoph {0} is eating. Spaghetti left {4}"
+            Console.WriteLine("Philosoph {0} is eating. Spaghetti left {1}"
                 , this.id
-                , this.rightFork.id
-                , this.leftFork.id
-                , Thread.CurrentThread.ManagedThreadId
                 , this.spaghetti);
             Thread.Sleep(1000);
         }

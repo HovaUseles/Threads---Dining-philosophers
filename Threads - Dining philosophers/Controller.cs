@@ -45,8 +45,8 @@ namespace Threads___Dining_philosophers
             {
                 Console.WriteLine("{0} has forks {1} and {2}"
                     , phil.name
-                    , phil.leftFork.id
-                    , phil.rightFork.id);
+                    , phil.rightFork.id
+                    , phil.leftFork.id);
             }
         }
 
