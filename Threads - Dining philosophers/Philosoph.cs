@@ -15,6 +15,7 @@ namespace Threads___Dining_philosophers
         public int spaghetti;
         public Thread thread;
         public bool runTread;
+        Random random = new Random();
         public Philosoph(Fork right, Fork left, int seatNr, string givenName)
         {
             this.leftFork = left;
@@ -37,9 +38,13 @@ namespace Threads___Dining_philosophers
                     {
                         TryOtherFork(this.rightFork);
                     }
-                    else if (Monitor.TryEnter(this.leftFork.inUse))
+                    //else if (Monitor.TryEnter(this.leftFork.inUse))
+                    //{
+                    //    TryOtherFork(this.leftFork);
+                    //}
+                    else
                     {
-                        TryOtherFork(this.leftFork);
+                        Think();
                     }
                 }
                 else
@@ -49,31 +54,37 @@ namespace Threads___Dining_philosophers
                     {
                         TryOtherFork(this.leftFork);
                     }
-                    else if (Monitor.TryEnter(this.rightFork.inUse))
+                    //else if (Monitor.TryEnter(this.rightFork.inUse))
+                    //{
+                    //    TryOtherFork(this.rightFork);
+                    //}
+                    else
                     {
-                        TryOtherFork(this.rightFork);
+                        Think();
                     }
 
                 }
-
+                Thread.Sleep(100 / 15);
             }
             if (runTread == true)
             {
-                Console.WriteLine("{0} is done eating", this.name);
-                Monitor.Exit(this.leftFork.inUse);
-                Monitor.Exit(this.rightFork.inUse);
+                Console.WriteLine("Philosopher {0} is done eating", this.id);
+                //Monitor.Exit(this.leftFork.inUse);
+                //Monitor.Exit(this.rightFork.inUse);
             }
         }
 
         private void TryOtherFork(Fork currentFork)
         {
             Fork otherFork;
-            if (currentFork == this.leftFork)
+            if (currentFork.id == this.leftFork.id)
             {
+                //Console.WriteLine("Left");
                 otherFork = this.rightFork;
             }
             else
             {
+                //Console.WriteLine("Right");
                 otherFork = this.leftFork;
             }
 
@@ -96,7 +107,7 @@ namespace Threads___Dining_philosophers
                     }
                     else
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(100/15);
                     }
                 }
             }
@@ -113,14 +124,21 @@ namespace Threads___Dining_philosophers
                             , currentFork.id);
             Monitor.Exit(currentFork.inUse);
         }
+        private void Think()
+        {
+            Console.WriteLine("Philosopher number {0} is thinking...", this.id);
+            Thread.Sleep(random.Next(100, 1000));
+        }
 
         private void Eat()
         {
-            this.spaghetti -= 100;
             Console.WriteLine("Philosoph {0} is eating. Spaghetti left {1}"
                 , this.id
                 , this.spaghetti);
-            Thread.Sleep(1000);
+            this.spaghetti -= 100;
+
+            Thread.Sleep(random.Next(100, 1000))
+                ;
         }
     }
 }
